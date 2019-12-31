@@ -1,6 +1,8 @@
 import re
 from string import ascii_lowercase
+import pautils.logger as logger
 
+__all__ = ['logger']
 
 LETTERS = {
     letter: str(index)
