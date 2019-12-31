@@ -10,71 +10,6 @@ LETTERS = {
 }
 
 
-def quarter(m):
-    return (m-1)//3 + 1
-
-
-def split_alphanum_label(label):
-    match = re.match(r"([0-9]+)((\.[a-z]+)|(\.[A-Z]+))", label, re.I)
-    if match:
-        items = match.groups()
-        items[1].replace('.', '')
-        return items
-
-    match = re.match(r"([0-9]+)(([a-z]+)|([A-Z]+))", label, re.I)
-    if match:
-        items = match.groups()
-        return items
-
-    match = re.match(r"([0-9]+)(\.[0-9]+)", label, re.I)
-    if match:
-        items = match.groups()
-        items[1].replace('.', '')
-        return items
-
-    return (label, '')
-
-def proposal_code_parts(code):
-    if code != None:
-        code = code.lower()
-        part0 = 'Shareholder' if code[0] == 's' else 'Management',
-        part1 = code.replace('m', '').replace('s', '').split('-')[0],
-        part2 = code.replace('m', '').replace('s', '').split('-')[1] if '-' in code else None,
-        return (part0, part1, part2)
-    return None
-
-def label_to_order_id(label, all_numeric=False):
-    label_tuple = split_alphanum_label(label)
-    left_side = ('00000' + str(label_tuple[0]))[-5:]
-
-    right_val = str(label_tuple[1].replace('.', '') if label_tuple[1] else '')
-
-    if all_numeric and not right_val.isdigit():
-        numbers = [
-            LETTERS[character] for character in right_val.lower()
-            if character in LETTERS
-        ]
-        right_val = ''.join(numbers)
-
-    right_side = ('00000' + (
-        right_val
-    ))[-5:]
-    return left_side + '-' + right_side
-
-
-def sorted_nicely(l):
-    """ Sort the given iterable in the way that humans expect."""
-    convert = lambda text: int(text) if text.isdigit() else text
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-    return sorted(l, key=alphanum_key)
-
-
-def none_if_blank(v):
-    if v and str(v).strip() != '':
-        return v
-    return None
-
-
 def cusip_format(v):
     if v and str(v).strip() == '':
         return None
@@ -161,3 +96,87 @@ def fix_11_to_110(label, prev):
 
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)
+
+
+def label_to_order_id(label, all_numeric=False):
+    label_tuple = split_alphanum_label(label)
+    left_side = ('00000' + str(label_tuple[0]))[-5:]
+
+    right_val = str(label_tuple[1].replace('.', '') if label_tuple[1] else '')
+
+    if all_numeric and not right_val.isdigit():
+        numbers = [
+            LETTERS[character] for character in right_val.lower()
+            if character in LETTERS
+        ]
+        right_val = ''.join(numbers)
+
+    right_side = ('00000' + (
+        right_val
+    ))[-5:]
+    return left_side + '-' + right_side
+
+
+def none_if_blank(v):
+    if v and str(v).strip() != '':
+        return v
+    return None
+
+
+def proposal_code_parts(code):
+    if code != None:
+        code = code.lower()
+        part0 = 'Shareholder' if code[0] == 's' else 'Management',
+        part1 = code.replace('m', '').replace('s', '').split('-')[0],
+        part2 = code.replace('m', '').replace('s', '').split('-')[1] if '-' in code else None,
+        return (part0, part1, part2)
+    return None
+
+
+def quarter(m):
+    return (m-1)//3 + 1
+    
+    
+def result_to_listdict(
+    cursor,
+    exclude_fields=['source'],
+    print_statement=False
+):
+    if print_statement:
+        print(cursor.statement)
+    result = [
+        dict(zip([key[0] for key in cursor.description], row))
+        for row in cursor.fetchall()
+    ]
+    return [
+        {k: v for k, v in row.items() if k not in exclude_fields}
+        for row in result
+    ]
+
+
+def sorted_nicely(l):
+    """ Sort the given iterable in the way that humans expect."""
+    convert = lambda text: int(text) if text.isdigit() else text
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
+
+def split_alphanum_label(label):
+    match = re.match(r"([0-9]+)((\.[a-z]+)|(\.[A-Z]+))", label, re.I)
+    if match:
+        items = match.groups()
+        items[1].replace('.', '')
+        return items
+
+    match = re.match(r"([0-9]+)(([a-z]+)|([A-Z]+))", label, re.I)
+    if match:
+        items = match.groups()
+        return items
+
+    match = re.match(r"([0-9]+)(\.[0-9]+)", label, re.I)
+    if match:
+        items = match.groups()
+        items[1].replace('.', '')
+        return items
+
+    return (label, '')
