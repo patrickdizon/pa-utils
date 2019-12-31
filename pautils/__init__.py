@@ -34,6 +34,12 @@ def split_alphanum_label(label):
 
     return (label, '')
 
+def proposal_code_parts(code):
+    code = code.lower()
+    part0 = 'Shareholder' if code[0] == 's' else 'Management',
+    part1 = code.replace('m', '').replace('s', '').split('-')[0],
+    part2 = code.replace('m', '').replace('s', '').split('-')[1] if '-' in code else None,
+    return (part0, part1, part2)
 
 def label_to_order_id(label, all_numeric=False):
     label_tuple = split_alphanum_label(label)
