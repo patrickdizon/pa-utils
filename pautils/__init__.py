@@ -126,9 +126,9 @@ def none_if_blank(v):
 def proposal_code_parts(code):
     if code != None:
         code = code.lower()
-        part0 = 'Shareholder' if code[0] == 's' else 'Management',
-        part1 = code.replace('m', '').replace('s', '').split('-')[0],
-        part2 = code.replace('m', '').replace('s', '').split('-')[1] if '-' in code else None,
+        part0 = 'Shareholder' if code[0] == 's' else 'Management'
+        part1 = code.replace('m', '').replace('s', '').split('-')[0]
+        part2 = code.replace('m', '').replace('s', '').split('-')[1] if '-' in code else None
         return (part0, part1, part2)
     return None
 
