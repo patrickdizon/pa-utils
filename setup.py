@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-   name='pa-utils',
+   name='pautils',
    version='0.0.1',
    description='Proxy Analytics Utils',
    author='Proxy Analytics Engineering',
